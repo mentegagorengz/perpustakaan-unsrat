@@ -211,4 +211,6 @@ const AdminBooksPage = () => {
   );
 };
 
-export default dynamic(() => Promise.resolve(withAuth(AdminBooksPage, "admin")), { ssr: false });
+const Page = withAuth(AdminBooksPage, "admin");
+
+export default Page;
