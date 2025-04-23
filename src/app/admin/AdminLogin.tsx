@@ -16,11 +16,7 @@ export default function AdminLoginPage() {
 
     if (token) {
       try {
-        interface MyJwtPayload {
-          role?: string;
-        }
-
-        const decodedToken = jwtDecode<MyJwtPayload>(token);
+        const decodedToken = jwtDecode(token);
         console.log("✅ Decoded Token:", decodedToken);
 
         if (decodedToken.role?.toLowerCase() === "admin") {
@@ -79,12 +75,8 @@ export default function AdminLoginPage() {
       } else {
         router.replace("/dashboard");
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Terjadi kesalahan yang tidak diketahui.");
-      }
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
