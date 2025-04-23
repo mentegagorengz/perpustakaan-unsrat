@@ -211,4 +211,6 @@ const AdminBooksPage = () => {
   );
 };
 
-export default withAuth(AdminBooksPage, "admin");
+const AdminBooksPageWithAuth = withAuth(AdminBooksPage, "admin");
+
+export default AdminBooksPageWithAuth;
