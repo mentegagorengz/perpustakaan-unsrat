@@ -79,8 +79,12 @@ export default function AdminLoginPage() {
       } else {
         router.replace("/dashboard");
       }
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Terjadi kesalahan yang tidak diketahui.");
+      }
     } finally {
       setLoading(false);
     }
