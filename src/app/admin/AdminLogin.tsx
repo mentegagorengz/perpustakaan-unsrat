@@ -16,7 +16,11 @@ export default function AdminLoginPage() {
 
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
+        interface MyJwtPayload {
+          role?: string;
+        }
+
+        const decodedToken = jwtDecode<MyJwtPayload>(token);
         console.log("✅ Decoded Token:", decodedToken);
 
         if (decodedToken.role?.toLowerCase() === "admin") {
