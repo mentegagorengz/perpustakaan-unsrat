@@ -147,7 +147,7 @@ const BookFormPopup: React.FC<BookFormProps> = ({ onClose, onSubmit, selectedBoo
           <div className="col-span-2 flex justify-end gap-3 pt-2">
             <Button
               type="button"
-              variant="outline"
+              variant="primary"
               onClick={onClose}
             >
               Batal
