@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import "tailwindcss/tailwind.css";
 import Breadcrumb from "../../components/Breadcrumb";
 import Image from "next/image";
 
