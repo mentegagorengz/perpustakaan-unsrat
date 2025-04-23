@@ -1,19 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, FC } from "react";
-import dynamic from "next/dynamic";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash, Search, Upload, Eye, Plus, Pencil, Download } from "lucide-react";
-import withAuth from "@/hoc/withAuth";
 import BookFormPopup from "./BookFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import BookDetailDialog from "./BookDetailDialog";
-import { Button as MTButton, IconButton } from "@material-tailwind/react";
-import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 const API_BASE_URL = "http://localhost:4000/book";
 
-const AdminBooksPage = () => {
+function AdminBooksPage() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,24 +51,6 @@ const AdminBooksPage = () => {
       alert("Gagal menghapus buku");
     } finally {
       setDeletingBookId(null);
-    }
-  };
-
-  const getItemProps = (index: number) => ({
-    variant: currentPage === index ? "filled" : "text",
-    color: "gray",
-    onClick: () => setCurrentPage(index),
-  });
-
-  const next = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -209,8 +187,6 @@ const AdminBooksPage = () => {
       {showDetail && <BookDetailDialog open={showDetail} book={selectedBook} onClose={() => setShowDetail(false)} />}
     </div>
   );
-};
+}
 
-const AdminBooksPageWithAuth = withAuth(AdminBooksPage, "admin");
-
-export default AdminBooksPageWithAuth;
+export default AdminBooksPage;
