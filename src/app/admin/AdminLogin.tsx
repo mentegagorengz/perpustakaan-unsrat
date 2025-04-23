@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
 
     try {
       // Kirim login request
-      const response = await fetch("http://localhost:4000/auth/staff/login", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/staff/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // penting untuk cookie!
@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
       }
 
       // Ambil data user dari token cookie
-      const resUser = await fetch("http://localhost:4000/auth/me", {
+      const resUser = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });

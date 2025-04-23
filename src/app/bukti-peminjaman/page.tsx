@@ -19,7 +19,7 @@ function BuktiPeminjaman() {
 
   const fetchTransactions = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/transactions/me`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions/me`, {
         method: "GET",
         credentials: "include",
       });

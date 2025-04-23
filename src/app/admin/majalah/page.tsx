@@ -8,7 +8,7 @@ import MajalahFormPopup from "./MajalahFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import MajalahDetailDialog from "./MajalahDetailDialog";
 
-const API_BASE_URL = "http://localhost:4000/majalah";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/majalah`;
 
 interface Majalah {
   id: string;
@@ -31,7 +31,9 @@ const AdminMajalahPage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}?search=${encodeURIComponent(searchTerm)}&page=${currentPage}&limit=${limit}`);
+      const res = await fetch(`${API_BASE_URL}?search=${encodeURIComponent(searchTerm)}&page=${currentPage}&limit=${limit}`, {
+        credentials: "include",
+      });
       const json = await res.json();
       setData(json.data);
       setTotalPages(json.totalPages);
@@ -53,7 +55,10 @@ const AdminMajalahPage: React.FC = () => {
     if (!confirmDelete) return;
     setDeletingId(id);
     try {
-      await fetch(`${API_BASE_URL}/${id}`, { method: "DELETE" });
+      await fetch(`${API_BASE_URL}/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       fetchData();
     } catch (err) {
       alert("Gagal menghapus");

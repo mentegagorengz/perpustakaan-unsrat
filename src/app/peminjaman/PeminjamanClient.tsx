@@ -47,7 +47,7 @@ function Peminjaman() {
       try {
         // Fetch books with pagination
         const res = await fetch(
-          `http://localhost:4000/book?search=${encodeURIComponent(searchTerm)}&page=${currentPage}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/book?search=${encodeURIComponent(searchTerm)}&page=${currentPage}`,
           {
             credentials: "include",
           }
@@ -77,7 +77,7 @@ function Peminjaman() {
     if (!selectedBook) return;
 
     try {
-      const res = await fetch("http://localhost:4000/transactions", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

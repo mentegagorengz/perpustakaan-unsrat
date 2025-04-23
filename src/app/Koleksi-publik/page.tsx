@@ -20,21 +20,30 @@ const KoleksiPublikPage = () => {
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
   const fetchBuku = async () => {
-    const res = await fetch(`http://localhost:4000/book?search=${search}&page=${page}&limit=${limit}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/book?search=${search}&page=${page}&limit=${limit}`, {
+      method: "GET",
+      credentials: "include",
+    });
     const data = await res.json();
     setBukuData(data.data || []);
     setTotalBuku(data.total || 0);
   };
 
   const fetchMajalah = async () => {
-    const res = await fetch(`http://localhost:4000/majalah?search=${search}&page=${page}&limit=${limit}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/majalah?search=${search}&page=${page}&limit=${limit}`, {
+      method: "GET",
+      credentials: "include",
+    });
     const data = await res.json();
     setMajalahData(data.data || []);
     setTotalMajalah(data.total || 0);
   };
 
   const fetchPenelitian = async () => {
-    const res = await fetch(`http://localhost:4000/penelitian?search=${search}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/penelitian?search=${search}`, {
+      method: "GET",
+      credentials: "include",
+    });
     const data = await res.json();
     setPenelitianData(Array.isArray(data.data) ? data.data : []);
   };

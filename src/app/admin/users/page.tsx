@@ -19,8 +19,6 @@ interface User {
   phoneNumber: string;
 }
 
-const API_BASE_URL = "http://localhost:4000/users";
-
 const UserManagementPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
@@ -56,7 +54,8 @@ const UserManagementPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(API_BASE_URL, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users`, {
+        credentials: "include",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -79,7 +78,7 @@ const UserManagementPage = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/${deleteUserId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${deleteUserId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -103,7 +102,9 @@ const UserManagementPage = () => {
     setLoading(true);
     try {
       const method = userData.id ? "PUT" : "POST";
-      const endpoint = userData.id ? `${API_BASE_URL}/${userData.id}` : `${API_BASE_URL}/register`;
+      const endpoint = userData.id
+        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userData.id}`
+        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/register`;
 
       const payload = { ...userData };
       if (method === "PUT" && !userData.password) {
@@ -112,6 +113,7 @@ const UserManagementPage = () => {
 
       const response = await fetch(endpoint, {
         method,
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -24,7 +24,7 @@ export default function ScanPage() {
         console.log("✅ QR Code terdeteksi:", transactionId);
 
         try {
-          const resDetail = await fetch(`http://localhost:4000/transactions/${transactionId}`, {
+          const resDetail = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions/${transactionId}`, {
             credentials: "include",
           });
 
@@ -36,7 +36,7 @@ export default function ScanPage() {
           const transaction = await resDetail.json();
 
           if (transaction.status === "pending-pickup") {
-            const confirmRes = await fetch(`http://localhost:4000/transactions/${transactionId}/pickup`, {
+            const confirmRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions/${transactionId}/pickup`, {
               method: "PATCH",
               credentials: "include",
             });
@@ -46,7 +46,7 @@ export default function ScanPage() {
               alert("❌ Gagal mengkonfirmasi pengambilan.");
             }
           } else if (transaction.status === "borrowed") {
-            const returnRes = await fetch(`http://localhost:4000/transactions/${transactionId}/return-qr`, {
+            const returnRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions/${transactionId}/return-qr`, {
               method: "PATCH",
               credentials: "include",
             });

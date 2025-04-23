@@ -33,7 +33,7 @@ export default function LoginPage() {
   useEffect(() => {
     setIsClient(true);
     const checkLogin = async () => {
-      const res = await fetch("http://localhost:4000/profile", { credentials: "include" });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/profile`, { credentials: "include" });
       if (res.ok) {
         const user = await res.json();
         const redirectPath = localStorage.getItem("redirectAfterLogin") || "/peminjaman";
@@ -65,7 +65,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:4000/auth/login", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -77,7 +77,7 @@ export default function LoginPage() {
         throw new Error(errorData.message || "Login gagal.");
       }
 
-      const check = await fetch("http://localhost:4000/users/profile", { credentials: "include" });
+      const check = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/profile`, { credentials: "include" });
       if (!check.ok) throw new Error("Gagal memverifikasi user.");
       const user = await check.json();
 
@@ -103,7 +103,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const check = await fetch("http://localhost:4000/users");
+      const check = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users`);
       const users = await check.json();
 
       const emailTaken = users.some((u: any) => u.email === email);
@@ -118,7 +118,7 @@ export default function LoginPage() {
         return;
       }
 
-      const response = await fetch("http://localhost:4000/users/register", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(registerData),
@@ -144,7 +144,7 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/auth/reset-password", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(resetData),

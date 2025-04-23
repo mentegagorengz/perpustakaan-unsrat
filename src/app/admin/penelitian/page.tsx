@@ -8,7 +8,7 @@ import PenelitianFormPopup from "./PenelitianFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import PenelitianDetailDialog from "./PenelitianDetailDialog";
 
-const API_BASE_URL = "http://localhost:4000/penelitian";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/penelitian`;
 
 interface Penelitian {
   id: string;
@@ -33,7 +33,9 @@ const AdminPenelitianPage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}?search=${encodeURIComponent(searchTerm)}&page=${currentPage}&limit=${limit}`);
+      const res = await fetch(`${API_BASE_URL}?search=${encodeURIComponent(searchTerm)}&page=${currentPage}&limit=${limit}`, {
+        credentials: "include",
+      });
       const json = await res.json();
       setData(json.data);
       setTotalPages(json.totalPages);
@@ -55,7 +57,10 @@ const AdminPenelitianPage: React.FC = () => {
     if (!confirmDelete) return;
     setDeletingId(id);
     try {
-      await fetch(`${API_BASE_URL}/${id}`, { method: "DELETE" });
+      await fetch(`${API_BASE_URL}/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       fetchData();
     } catch (err) {
       alert("Gagal menghapus");

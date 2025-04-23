@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import withAdminAuth from "@/hoc/withAdminAuth";
 import * as XLSX from "xlsx";
 
-const API_BASE_URL = "http://localhost:4000/transactions";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions`;
 
 interface Transaction {
   id: string;
@@ -59,7 +59,7 @@ const BorrowingHistoryPage: React.FC = () => {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch(API_BASE_URL, { method: "GET", credentials: "include" });
+      const response = await fetch(`${API_BASE_URL}`, { method: "GET", credentials: "include" });
       if (!response.ok) throw new Error("Gagal mengambil data histori peminjaman.");
       setHistory(await response.json());
     } catch (err) {

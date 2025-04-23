@@ -62,7 +62,10 @@ const AdminDashboard = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:4000/dashboard")
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/dashboard`, {
+      method: "GET",
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((data) => setData(data))
       .catch((err) => {

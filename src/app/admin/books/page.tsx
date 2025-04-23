@@ -7,7 +7,7 @@ import BookFormPopup from "./BookFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import BookDetailDialog from "./BookDetailDialog";
 
-const API_BASE_URL = "http://localhost:4000/book";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/book`;
 
 function AdminBooksPage() {
   const [books, setBooks] = useState([]);
@@ -25,7 +25,10 @@ function AdminBooksPage() {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}?search=${encodeURIComponent(searchTerm)}&page=${currentPage}&limit=${limit}`);
+      const res = await fetch(`${API_BASE_URL}?search=${encodeURIComponent(searchTerm)}&page=${currentPage}&limit=${limit}`, {
+        method: "GET",
+        credentials: "include",
+      });
       const json = await res.json();
       setBooks(json.data);
       setTotalPages(json.totalPages);
@@ -44,7 +47,10 @@ function AdminBooksPage() {
     if (!confirm("Yakin ingin menghapus buku ini?")) return;
     setDeletingBookId(id);
     try {
-      const res = await fetch(`${API_BASE_URL}/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE_URL}/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       if (!res.ok) throw new Error();
       fetchBooks();
     } catch {
