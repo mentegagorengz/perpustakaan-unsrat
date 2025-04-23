@@ -19,7 +19,7 @@ function AdminBooksPage() {
   const [showCSVDialog, setShowCSVDialog] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [deletingBookId, setDeletingBookId] = useState(null);
+  const [deletingBookId, setDeletingBookId] = useState<string | null>(null);
   const limit = 10;
 
   const fetchBooks = async () => {
