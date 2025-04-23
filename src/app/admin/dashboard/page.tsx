@@ -176,4 +176,4 @@ const DashboardCard = ({
   </Card>
 );
 
-export default withAuth(AdminDashboard, "admin");
+export default AdminDashboard;

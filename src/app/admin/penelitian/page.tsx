@@ -142,4 +142,4 @@ const AdminPenelitianPage = () => {
   );
 };
 
-export default dynamic(() => Promise.resolve(withAuth(AdminPenelitianPage, "admin")), { ssr: false });
+export default AdminPenelitianPage;

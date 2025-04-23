@@ -188,4 +188,4 @@ const BorrowingHistoryPage = () => {
   );
 };
 
-export default withAuth(BorrowingHistoryPage, "admin");
+export default BorrowingHistoryPage;

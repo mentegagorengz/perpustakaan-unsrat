@@ -143,4 +143,4 @@ const AdminMajalahPage = () => {
   );
 };
 
-export default dynamic(() => Promise.resolve(withAuth(AdminMajalahPage, "admin")), { ssr: false });
+export default AdminMajalahPage;
