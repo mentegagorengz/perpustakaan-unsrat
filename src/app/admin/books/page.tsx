@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Trash, Search, Upload, Eye, Plus, Pencil, Download } from "lucide-react";
@@ -211,6 +211,4 @@ const AdminBooksPage = () => {
   );
 };
 
-const Page = withAuth(AdminBooksPage, "admin");
-
-export default Page;
+export default withAuth(AdminBooksPage, "admin");
