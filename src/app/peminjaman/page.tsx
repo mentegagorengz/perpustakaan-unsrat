@@ -272,4 +272,4 @@ function Peminjaman() {
   );
 }
 
-export default withAuth(Peminjaman, "user");
+export default Peminjaman;

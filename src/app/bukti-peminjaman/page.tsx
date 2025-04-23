@@ -104,4 +104,4 @@ function BuktiPeminjaman() {
   );
 }
 
-export default withAuth(BuktiPeminjaman, "user");
+export default BuktiPeminjaman;
