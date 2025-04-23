@@ -9,13 +9,14 @@ export default function ScanPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const scanner = new Html5QrcodeScanner("qr-reader", {
-      fps: 10,
-      qrbox: 250,
-    });
+    const scanner = new Html5QrcodeScanner(
+      "qr-reader",
+      { fps: 10, qrbox: 250 },
+      false // verbose mode
+    );
 
     scanner.render(
-      async (decodedText) => {
+      async (decodedText: string) => {
         if (isProcessing) return;
         setIsProcessing(true);
 
@@ -23,7 +24,6 @@ export default function ScanPage() {
         console.log("✅ QR Code terdeteksi:", transactionId);
 
         try {
-          // Ambil data transaksi dulu untuk cek status
           const resDetail = await fetch(`http://localhost:4000/transactions/${transactionId}`, {
             credentials: "include",
           });
@@ -36,7 +36,6 @@ export default function ScanPage() {
           const transaction = await resDetail.json();
 
           if (transaction.status === "pending-pickup") {
-            // Konfirmasi peminjaman
             const confirmRes = await fetch(`http://localhost:4000/transactions/${transactionId}/pickup`, {
               method: "PATCH",
               credentials: "include",
@@ -47,7 +46,6 @@ export default function ScanPage() {
               alert("❌ Gagal mengkonfirmasi pengambilan.");
             }
           } else if (transaction.status === "borrowed") {
-            // Konfirmasi pengembalian
             const returnRes = await fetch(`http://localhost:4000/transactions/${transactionId}/return-qr`, {
               method: "PATCH",
               credentials: "include",
@@ -66,15 +64,15 @@ export default function ScanPage() {
           console.error("❌ Error saat proses QR:", error);
         }
 
-        setTimeout(() => setIsProcessing(false), 3000); // Debounce
+        setTimeout(() => setIsProcessing(false), 3000);
       },
-      (error) => {
+      (error: string) => {
         console.warn("QR scan error:", error);
       }
     );
 
     return () => {
-      scanner.clear().catch((error) => {
+      scanner.clear().catch((error: unknown) => {
         console.error("Gagal membersihkan scanner:", error);
       });
     };

@@ -7,17 +7,29 @@ import { Pencil, Trash, Plus, Search } from "lucide-react";
 import withAuth from "@/hoc/withAuth";
 import UserFormPopup from "./userformpopup";
 
+interface User {
+  id: string;
+  fullName: string;
+  faculty: string;
+  nim: string;
+  email: string;
+  address: string;
+  birthDate: string;
+  gender: string;
+  phoneNumber: string;
+}
+
 const API_BASE_URL = "http://localhost:4000/users";
 
 const UserManagementPage = () => {
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [editUser, setEditUser] = useState(null);
-  const [deleteUserId, setDeleteUserId] = useState(null);
+  const [editUser, setEditUser] = useState<User | undefined>(undefined);
+  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -55,7 +67,7 @@ const UserManagementPage = () => {
 
       setUsers(data);
       setFilteredUsers(data);
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
     } finally {
       setLoading(false);
@@ -76,16 +88,16 @@ const UserManagementPage = () => {
 
       if (!response.ok) throw new Error("Gagal menghapus pengguna");
 
-      setUsers(prev => prev.filter(user => user.id !== deleteUserId));
+      setUsers((prev) => prev.filter((user) => user.id !== deleteUserId));
       setDeleteUserId(null);
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSaveUser = async (userData) => {
+  const handleSaveUser = async (userData: Partial<User> & { password?: string }) => {
     if (!userData) return;
 
     setLoading(true);
@@ -111,8 +123,8 @@ const UserManagementPage = () => {
 
       fetchUsers();
       setIsPopupOpen(false);
-      setEditUser(null);
-    } catch (error) {
+      setEditUser(undefined);
+    } catch (error: any) {
       setError(error.message);
     } finally {
       setLoading(false);
@@ -133,7 +145,7 @@ const UserManagementPage = () => {
             <Input
               placeholder="Cari..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
               className="pl-3 pr-10"
             />
             <Search className="absolute right-2 top-2.5 w-5 h-5 text-slate-500" />
@@ -195,7 +207,7 @@ const UserManagementPage = () => {
         isOpen={isPopupOpen || !!editUser}
         onClose={() => {
           setIsPopupOpen(false);
-          setEditUser(null);
+          setEditUser(undefined);
         }}
         user={editUser}
         onSubmit={handleSaveUser}

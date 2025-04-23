@@ -1,26 +1,34 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Trash, Search, Upload, Eye, Download } from "lucide-react";
-import withAuth from "@/hoc/withAuth";
+import withAdminAuth from "@/hoc/withAdminAuth";
 import PenelitianFormPopup from "./PenelitianFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import PenelitianDetailDialog from "./PenelitianDetailDialog";
 
 const API_BASE_URL = "http://localhost:4000/penelitian";
 
-const AdminPenelitianPage = () => {
-  const [data, setData] = useState([]);
+interface Penelitian {
+  id: string;
+  title?: string;
+  main_author?: string;
+  publisher?: string;
+  type?: string;
+  availability?: string;
+}
+
+const AdminPenelitianPage: React.FC = () => {
+  const [data, setData] = useState<Penelitian[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showCSVDialog, setShowCSVDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<Penelitian | null>(null);
   const [showDetail, setShowDetail] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const limit = 50;
 
   const fetchData = async () => {
@@ -42,7 +50,7 @@ const AdminPenelitianPage = () => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  const deleteItem = async (id) => {
+  const deleteItem = async (id: string) => {
     const confirmDelete = window.confirm("Apakah yakin ingin menghapus?");
     if (!confirmDelete) return;
     setDeletingId(id);
@@ -142,4 +150,4 @@ const AdminPenelitianPage = () => {
   );
 };
 
-export default AdminPenelitianPage;
+export default withAdminAuth(AdminPenelitianPage);

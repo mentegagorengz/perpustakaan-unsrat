@@ -1,26 +1,32 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Trash, Search, Upload, Eye, Download } from "lucide-react";
-import withAuth from "@/hoc/withAuth";
+import withAdminAuth from "@/hoc/withAdminAuth";
 import MajalahFormPopup from "./MajalahFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import MajalahDetailDialog from "./MajalahDetailDialog";
 
 const API_BASE_URL = "http://localhost:4000/majalah";
 
-const AdminMajalahPage = () => {
-  const [data, setData] = useState([]);
+interface Majalah {
+  id: string;
+  title?: string;
+  issn?: string;
+  [key: string]: any;
+}
+
+const AdminMajalahPage: React.FC = () => {
+  const [data, setData] = useState<Majalah[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showCSVDialog, setShowCSVDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<Majalah | null>(null);
   const [showDetail, setShowDetail] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const limit = 50;
 
   const fetchData = async () => {
@@ -42,7 +48,7 @@ const AdminMajalahPage = () => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  const deleteItem = async (id) => {
+  const deleteItem = async (id: string) => {
     const confirmDelete = window.confirm("Apakah yakin ingin menghapus?");
     if (!confirmDelete) return;
     setDeletingId(id);
@@ -104,7 +110,7 @@ const AdminMajalahPage = () => {
                   <td colSpan={7} className="px-4 py-3 text-center text-gray-500">📰 Tidak ada majalah.</td>
                 </tr>
               ) : (
-                data.map((item, index) => (
+                data.map((item: Majalah, index) => (
                   <tr key={item.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3">{(currentPage - 1) * limit + index + 1}</td>
                     <td className="px-4 py-3">{item.title || "-"}</td>
@@ -143,4 +149,4 @@ const AdminMajalahPage = () => {
   );
 };
 
-export default AdminMajalahPage;
+export default withAdminAuth(AdminMajalahPage);

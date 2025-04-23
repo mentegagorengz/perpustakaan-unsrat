@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,18 +17,60 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
-const AdminSidebar = () => {
+// ✅ Tambahkan tipe props di sini
+interface AdminSidebarProps {
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
+}
+
+interface Transaction {
+  id: string;
+  status: string;
+  borrowDate: string;
+  returnDate?: string; // Tambahkan properti opsional jika diperlukan
+  borrowerName?: string; // Tambahkan properti opsional lainnya
+}
+
+// Helper function to format elapsed time
+const formatElapsedTime = (borrowDate: string): string => {
+  const borrowDateTime = new Date(borrowDate).getTime();
+  const currentTime = Date.now();
+  const elapsedMilliseconds = currentTime - borrowDateTime;
+
+  const days = Math.floor(elapsedMilliseconds / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((elapsedMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((elapsedMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+  return `${days}d ${hours}h ${minutes}m`;
+};
+
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { logout } = useAuth();
 
   const [openKoleksi, setOpenKoleksi] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [history, setHistory] = useState<Transaction[]>([]);
+  const [elapsedTimes, setElapsedTimes] = useState<{ [key: string]: string }>({});
 
   const handleLogout = () => {
     logout();
     router.replace("/");
   };
+
+  useEffect(() => {
+    const calculateElapsedTimes = () => {
+      return history.reduce((acc, transaction) => {
+        if (transaction.status === "borrowed") {
+          acc[transaction.id] = formatElapsedTime(transaction.borrowDate);
+        }
+        return acc;
+      }, {} as { [key: string]: string });
+    };
+
+    setElapsedTimes(calculateElapsedTimes());
+  }, [history]);
 
   return (
     <>

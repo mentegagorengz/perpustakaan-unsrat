@@ -5,38 +5,50 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import withAuth from "@/hoc/withAuth";
+import withAdminAuth from "@/hoc/withAdminAuth";
 import * as XLSX from "xlsx";
 
 const API_BASE_URL = "http://localhost:4000/transactions";
 
-const BorrowingHistoryPage = () => {
-  const [history, setHistory] = useState([]);
+interface Transaction {
+  id: string;
+  status: string;
+  borrowDate: string;
+  dueDate: string;
+  returnDate?: string;
+  User?: {
+    fullName: string;
+  };
+  Book?: {
+    title: string;
+  };
+}
+
+const BorrowingHistoryPage: React.FC = () => {
+  const [history, setHistory] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [elapsedTimes, setElapsedTimes] = useState({});
+  const [elapsedTimes, setElapsedTimes] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     fetchHistory();
-    checkAdminRole();
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setElapsedTimes((prev) =>
+      setElapsedTimes(
         history.reduce((acc, t) => {
           if (t.status === "borrowed") {
             acc[t.id] = formatElapsedTime(t.borrowDate);
           }
           return acc;
-        }, {})
+        }, {} as { [key: string]: string })
       );
     }, 1000);
     return () => clearInterval(interval);
   }, [history]);
 
-  const formatElapsedTime = (startDate) => {
+  const formatElapsedTime = (startDate: string): string => {
     const diffMs = new Date().getTime() - new Date(startDate).getTime();
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
@@ -45,35 +57,23 @@ const BorrowingHistoryPage = () => {
     return `${days > 0 ? `${days} hari ` : ""}${hours} jam ${minutes} menit ${seconds} detik`.trim();
   };
 
-  const decodeToken = (token) => {
-    try {
-      return JSON.parse(atob(token.split(".")[1]));
-    } catch {
-      return null;
-    }
-  };
-
-  const checkAdminRole = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const decodedToken = decodeToken(token);
-      setIsAdmin(decodedToken?.role === "admin");
-    }
-  };
-
   const fetchHistory = async () => {
     try {
       const response = await fetch(API_BASE_URL, { method: "GET", credentials: "include" });
       if (!response.ok) throw new Error("Gagal mengambil data histori peminjaman.");
       setHistory(await response.json());
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan tak dikenal.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTransactionAction = async (transactionId, action, successMessage) => {
+  const handleTransactionAction = async (
+    transactionId: string,
+    action: string,
+    successMessage: string
+  ) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Anda harus login sebagai admin.");
@@ -85,20 +85,21 @@ const BorrowingHistoryPage = () => {
       alert(successMessage);
       fetchHistory();
     } catch (err) {
-      alert(err.message);
+      alert(err instanceof Error ? err.message : "Terjadi kesalahan yang tidak diketahui.");
     }
   };
 
   const exportToExcel = () => {
     if (!history.length) return alert("Tidak ada data untuk diekspor.");
     const formattedData = history.map((t) => ({
-      "Nama Peminjam": t.User?.nama || "-",
+      "Nama Peminjam": t.User?.fullName || "-",
       "Judul Buku": t.Book?.title || "-",
       "Tanggal Peminjaman": new Date(t.borrowDate).toLocaleDateString("id-ID"),
       "Batas Pengembalian": new Date(t.dueDate).toLocaleDateString("id-ID"),
       "Tanggal Kembali": t.returnDate ? new Date(t.returnDate).toLocaleDateString("id-ID") : "-",
-      "Status": t.status === "pending" ? "Menunggu Konfirmasi"
-        : t.status === "borrowed" ? "Sedang Dipinjam" : "Dikembalikan",
+      "Status": t.status === "pending-pickup" ? "Menunggu Pengambilan"
+        : t.status === "borrowed" ? "Sedang Dipinjam"
+        : t.status === "returned" ? "Sudah Dikembalikan" : "Tidak Diketahui"
     }));
     const worksheet = XLSX.utils.json_to_sheet(formattedData);
     const workbook = XLSX.utils.book_new();
@@ -106,7 +107,8 @@ const BorrowingHistoryPage = () => {
     XLSX.writeFile(workbook, `Laporan_Peminjaman.xlsx`);
   };
 
-  const isOverdue = (transaction) => transaction.status === "borrowed" && new Date(transaction.dueDate) < new Date();
+  const isOverdue = (transaction: Transaction): boolean =>
+    transaction.status === "borrowed" && new Date(transaction.dueDate) < new Date();
 
   return (
     <div className="p-6">
@@ -154,7 +156,7 @@ const BorrowingHistoryPage = () => {
                   {isOverdue(transaction) ? <span className="text-red-600 font-semibold">Lewat Batas</span> : "-"}
                 </td>
                 <td className="p-2 space-y-1">
-                  {isAdmin && transaction.status === "pending-pickup" && (
+                  {transaction.status === "pending-pickup" && (
                     <>
                       <Button className="bg-blue-600 text-white px-3 py-1 text-xs rounded-md" onClick={() => handleTransactionAction(transaction.id, "pickup", "📦 Buku berhasil diambil oleh peminjam.")}>
                         Konfirmasi Ambil
@@ -164,7 +166,7 @@ const BorrowingHistoryPage = () => {
                       </Button>
                     </>
                   )}
-                  {isAdmin && transaction.status === "borrowed" && (
+                  {transaction.status === "borrowed" && (
                     <>
                       <Button className="bg-green-600 text-white px-3 py-1 text-xs rounded-md" onClick={() => handleTransactionAction(transaction.id, "return-qr", "📘 Buku berhasil dikembalikan (QR).")}>
                         Scan QR Kembali
@@ -188,4 +190,4 @@ const BorrowingHistoryPage = () => {
   );
 };
 
-export default BorrowingHistoryPage;
+export default withAdminAuth(BorrowingHistoryPage);

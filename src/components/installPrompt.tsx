@@ -1,3 +1,8 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+
 function InstallPrompt() {
     const [isIOS, setIsIOS] = useState(false)
     const [isStandalone, setIsStandalone] = useState(false)

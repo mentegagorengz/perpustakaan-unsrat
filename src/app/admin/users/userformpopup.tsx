@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 interface User {
-  id?: number;
+  id?: string;
   fullName: string;
   email: string;
   nim: string;

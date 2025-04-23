@@ -19,8 +19,46 @@ import moment from "moment";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+// Define TypeScript interfaces for data structures
+interface Stats {
+  totalBooks: number;
+  borrowedBooks: number;
+  availableBooks: number;
+  transactionsToday: number;
+  totalTransactions: number;
+  users: number;
+  admins: number;
+}
+
+interface PopularBook {
+  title: string;
+  borrowCount: number;
+}
+
+interface OverdueItem {
+  id: string;
+  userName: string;
+  bookTitle: string;
+  dueDate: string;
+  emailSentAt?: string;
+}
+
+interface RecentTransaction {
+  id: string;
+  userName: string;
+  bookTitle: string;
+  date: string;
+}
+
+interface DashboardData {
+  stats: Stats;
+  recentTransactions: RecentTransaction[];
+  popularBooks: PopularBook[];
+  overdueList: OverdueItem[];
+}
+
 const AdminDashboard = () => {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -37,12 +75,7 @@ const AdminDashboard = () => {
     return <div className="p-6">Memuat data dashboard...</div>;
   }
 
-  const {
-    stats,
-    recentTransactions,
-    popularBooks,
-    overdueList
-  } = data;
+  const { stats, recentTransactions, popularBooks, overdueList } = data;
 
   const chartData = {
     labels: popularBooks.map((b) => b.title),
@@ -53,6 +86,19 @@ const AdminDashboard = () => {
         backgroundColor: "rgba(59,130,246,0.6)",
       },
     ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "Grafik Buku Paling Banyak Dipinjam",
+      },
+    },
   };
 
   return (
@@ -74,7 +120,7 @@ const AdminDashboard = () => {
       {/* Grafik Populer */}
       <div className="bg-white p-6 rounded-lg shadow">
         <h3 className="text-xl font-semibold mb-4">Buku Paling Populer</h3>
-        <Bar data={chartData} options={{ responsive: true }} />
+        <Bar data={chartData} options={chartOptions} />
       </div>
 
       {/* 📂 Tombol Ekspor */}
@@ -118,7 +164,7 @@ const AdminDashboard = () => {
 
         {overdueList && overdueList.length > 0 ? (
           <ul className="space-y-3">
-            {overdueList.map((item: any) => (
+            {overdueList.map((item) => (
               <li
                 key={item.id}
                 className="border rounded p-3 bg-red-50 shadow-sm text-sm"
@@ -147,7 +193,7 @@ const AdminDashboard = () => {
       <div className="bg-white p-6 rounded-lg shadow">
         <h3 className="text-xl font-semibold mb-4">Transaksi Terbaru</h3>
         <div className="space-y-2">
-          {recentTransactions.length > 0 ? recentTransactions.map((tx: any) => (
+          {recentTransactions.length > 0 ? recentTransactions.map((tx) => (
             <div key={tx.id} className="border-b pb-2">
               📌 <strong>{tx.userName}</strong> meminjam <em>"{tx.bookTitle}"</em> — {moment(tx.date).fromNow()}
             </div>
