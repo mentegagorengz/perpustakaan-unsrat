@@ -148,12 +148,11 @@ const BookFormPopup: React.FC<BookFormProps> = ({ onClose, onSubmit, selectedBoo
             <Button
               type="button"
               variant="outline"
-              className="border-gray-400 text-gray-700 hover:bg-gray-200"
               onClick={onClose}
             >
               Batal
             </Button>
-            <Button type="submit" className="bg-[#784d1e] hover:bg-[#5a3516] text-white">
+            <Button type="submit" variant="secondary">
               {selectedBook ? "Update" : "Tambah"}
             </Button>
           </div>
