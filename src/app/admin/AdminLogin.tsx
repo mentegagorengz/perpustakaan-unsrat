@@ -2,7 +2,12 @@
 
 import { useState, useEffect, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+
+// Tipe payload kustom dengan properti role
+interface MyJwtPayload extends JwtPayload {
+  role?: string;
+}
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -16,7 +21,7 @@ export default function AdminLoginPage() {
 
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
+        const decodedToken = jwtDecode<MyJwtPayload>(token); // 👈 pakai tipe MyJwtPayload
         console.log("✅ Decoded Token:", decodedToken);
 
         if (decodedToken.role?.toLowerCase() === "admin") {
@@ -32,9 +37,10 @@ export default function AdminLoginPage() {
     }
   }, [router]);
 
-  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: ChangeEvent<HTMLInputElement>) => {
-    setter(e.target.value);
-  };
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setter(e.target.value);
+    };
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -46,11 +52,10 @@ export default function AdminLoginPage() {
     setError("");
 
     try {
-      // Kirim login request
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/staff/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // penting untuk cookie!
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -59,7 +64,6 @@ export default function AdminLoginPage() {
         throw new Error(errorData.message || "Login gagal.");
       }
 
-      // Ambil data user dari token cookie
       const resUser = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
@@ -75,7 +79,7 @@ export default function AdminLoginPage() {
       } else {
         router.replace("/dashboard");
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -85,9 +89,7 @@ export default function AdminLoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h1 className="text-2xl font-bold text-center text-[#1f2023] mb-6">
-          Login
-        </h1>
+        <h1 className="text-2xl font-bold text-center text-[#1f2023] mb-6">Login</h1>
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
         <input
           type="email"
