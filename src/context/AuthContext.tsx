@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  login: (token: string) => void;
+  login: () => void;
   logout: () => void;
 }
 
@@ -11,28 +11,39 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  // Mengambil token dari localStorage saat aplikasi dimuat
+  // ✅ Cek status login saat load (berdasarkan cookie dari /auth/me)
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-    }
+    const checkLogin = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+          credentials: "include",
+        });
+
+        if (res.ok) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      } catch (err) {
+        console.error("Gagal cek status login:", err);
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLogin();
   }, []);
 
-  const login = (token: string) => {
-    localStorage.setItem("token", token);
+  const login = () => {
     setIsLoggedIn(true);
   };
 
   const logout = async () => {
     try {
-      // Panggil endpoint logout di backend
-      await fetch("http://localhost:4000/auth/logout", {
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
         method: "POST",
-        credentials: "include", // kirim cookie
+        credentials: "include",
       });
 
-      localStorage.removeItem("token");
       setIsLoggedIn(false);
     } catch (err) {
       console.error("Logout error:", err);
@@ -46,10 +57,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-// Custom hook untuk menggunakan AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
