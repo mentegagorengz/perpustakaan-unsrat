@@ -17,25 +17,33 @@ export default function AdminLoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
+    // Coba panggil /auth/me untuk cek login dari cookie
+    const checkLogin = async () => {
       try {
-        const decodedToken = jwtDecode<MyJwtPayload>(token); // 👈 pakai tipe MyJwtPayload
-        console.log("✅ Decoded Token:", decodedToken);
-
-        if (decodedToken.role?.toLowerCase() === "admin") {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+          method: "GET",
+          credentials: "include",
+        });
+  
+        if (!res.ok) return;
+  
+        const user = await res.json();
+        const role = user.role?.toLowerCase();
+  
+        if (user.type === "staff" && role === "admin") {
           router.replace("/admin/dashboard");
+        } else if (user.type === "staff") {
+          router.replace("/staff/dashboard");
         } else {
-          console.error("❌ Bukan admin, menghapus token.");
-          localStorage.removeItem("token");
+          router.replace("/");
         }
       } catch (error) {
-        console.error("❌ Error decoding token:", error);
-        localStorage.removeItem("token");
+        console.log("Not logged in");
       }
-    }
-  }, [router]);
+    };
+  
+    checkLogin();
+  }, [router]);  
 
   const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) =>
     (e: ChangeEvent<HTMLInputElement>) => {
