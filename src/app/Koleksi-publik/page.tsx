@@ -25,15 +25,22 @@ const KoleksiPublikPage = () => {
         method: "GET",
         credentials: "include",
       });
+  
+      // Cek dulu response-nya readable atau tidak
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(`Invalid content-type: ${contentType}`);
+      }
+  
       const data = await res.json();
-      console.log("📦 Res Buku:", data);
+      console.log("📦 Data Buku:", data);
       setBukuData(data.data || data.books || []);
       setTotalBuku(data.total || 0);
     } catch (err) {
       console.error("❌ Gagal ambil data buku:", err);
-      setBukuData([]);
+      setBukuData([]); // supaya tidak error render
     }
-  };  
+  };   
 
   const fetchMajalah = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/majalah?search=${search}&page=${page}&limit=${limit}`, {
