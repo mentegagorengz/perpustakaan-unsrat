@@ -81,7 +81,7 @@ export default function LoginPage() {
       if (!check.ok) throw new Error("Gagal memverifikasi user.");
       const user = await check.json();
 
-      login(user);
+      login();
       const redirectPath = localStorage.getItem("redirectAfterLogin") || "/peminjaman";
       localStorage.removeItem("redirectAfterLogin");
       router.replace(redirectPath);
