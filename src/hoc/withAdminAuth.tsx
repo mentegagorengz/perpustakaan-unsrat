@@ -2,50 +2,52 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
 
 export default function withAdminAuth<T extends Record<string, unknown>>(
   Component: React.ComponentType<T>
 ) {
   return function AuthenticatedComponent(props: T) {
     const router = useRouter();
-    const [isVerified, setIsVerified] = useState<boolean>(false);
+    const [loading, setLoading] = useState(true);
+    const [authorized, setAuthorized] = useState(false);
 
     useEffect(() => {
-      const token = localStorage.getItem("token");
+      const verify = async () => {
+        try {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+            method: "GET",
+            credentials: "include", // ⬅️ agar cookie terkirim
+          });
 
-      if (!token) {
-        console.warn("❌ Tidak ada token, redirect ke login.");
-        router.replace("/login");
-        return;
-      }
+          if (!res.ok) throw new Error("Unauthorized");
 
-      try {
-        const decodedToken = jwtDecode<{ role: string }>(token);
-        console.log("✅ Token Decoded:", decodedToken);
+          const user = await res.json();
 
-        if (!decodedToken || decodedToken.role !== "admin") {
-          console.warn("❌ Role bukan admin, redirect ke halaman peminjaman.");
-          router.replace("/peminjaman");
-          return;
+          if (user.role?.toLowerCase() === "admin") {
+            setAuthorized(true);
+          } else {
+            console.warn("❌ Bukan admin, redirect ke /peminjaman");
+            router.replace("/peminjaman");
+          }
+        } catch (err) {
+          console.error("❌ Gagal verifikasi token:", err);
+          router.replace("/login");
+        } finally {
+          setLoading(false);
         }
+      };
 
-        setIsVerified(true);
-      } catch (error) {
-        console.error("❌ Error decoding token:", error);
-        localStorage.removeItem("token");
-        router.replace("/login");
-      }
+      verify();
     }, [router]);
 
-    if (!isVerified) {
+    if (loading) {
       return (
         <div className="flex items-center justify-center min-h-screen">
-          <p className="text-lg font-semibold">Memverifikasi akses...</p>
+          <p className="text-lg font-semibold">Memverifikasi akses admin...</p>
         </div>
       );
     }
 
-    return <Component {...props} />;
+    return authorized ? <Component {...props} /> : null;
   };
 }
