@@ -54,10 +54,19 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isSidebarOpen, setIsSidebar
   const [history, setHistory] = useState<Transaction[]>([]);
   const [elapsedTimes, setElapsedTimes] = useState<{ [key: string]: string }>({});
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include", // agar cookie terkirim & dihapus
+      });
+    } catch (err) {
+      console.error("Gagal logout dari server:", err);
+    }
+  
     router.replace("/");
   };
+  
 
   useEffect(() => {
     const calculateElapsedTimes = () => {
