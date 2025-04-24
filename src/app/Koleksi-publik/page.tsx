@@ -20,14 +20,20 @@ const KoleksiPublikPage = () => {
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
   const fetchBuku = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/book?search=${search}&page=${page}&limit=${limit}`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const data = await res.json();
-    setBukuData(data.data || []);
-    setTotalBuku(data.total || 0);
-  };
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/book?search=${search}&page=${page}&limit=${limit}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await res.json();
+      console.log("📦 Res Buku:", data);
+      setBukuData(data.data || data.books || []);
+      setTotalBuku(data.total || 0);
+    } catch (err) {
+      console.error("❌ Gagal ambil data buku:", err);
+      setBukuData([]);
+    }
+  };  
 
   const fetchMajalah = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/majalah?search=${search}&page=${page}&limit=${limit}`, {
