@@ -37,17 +37,25 @@ export default function Header() {
   }, []);
 
   // Fungsi Logout dengan Redirect
-  const handleLogout = () => {
-    logout(); // Panggil fungsi logout dari AuthContext
-    localStorage.removeItem("token"); // Bersihkan token di localStorage
-    localStorage.removeItem("userId"); // Bersihkan userId juga
-    setShowToast(true); // Tampilkan notifikasi logout
-
-    setTimeout(() => {
-      setShowToast(false);
-      router.replace("/"); // Redirect ke beranda setelah logout
-    }, 2000);
+  const handleLogout = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include", // ⬅️ WAJIB agar cookie terkirim
+      });
+  
+      logout(); // Bersihkan context jika ada (opsional, tergantung isi useAuth)
+      setShowToast(true);
+  
+      setTimeout(() => {
+        setShowToast(false);
+        router.replace("/");
+      }, 1500);
+    } catch (err) {
+      console.error("Logout gagal:", err);
+    }
   };
+  
 
   return (
     <header className="bg-[#784d1e] text-white sticky top-0 z-50 shadow-md">
