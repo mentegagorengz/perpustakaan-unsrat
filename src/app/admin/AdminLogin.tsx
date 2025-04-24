@@ -42,49 +42,55 @@ export default function AdminLoginPage() {
       setter(e.target.value);
     };
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      setError("Email dan password harus diisi!");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/staff/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login gagal.");
+    const handleLogin = async () => {
+      if (!email || !password) {
+        setError("Email dan password harus diisi!");
+        return;
       }
-
-      const resUser = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      const user = await resUser.json();
-      const role = user.role?.toLowerCase();
-
-      if (role === "admin") {
-        router.replace("/admin/dashboard");
-      } else if (role === "staff") {
-        router.replace("/staff/dashboard");
-      } else {
-        router.replace("/dashboard");
+    
+      setLoading(true);
+      setError("");
+    
+      try {
+        // LOGIN STAFF
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/staff/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // agar cookie access_token terkirim
+          body: JSON.stringify({ email, password }),
+        });
+    
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Login gagal.");
+        }
+    
+        // FETCH DATA ME
+        const resUser = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+          method: "GET",
+          credentials: "include",
+        });
+    
+        const user = await resUser.json();
+        console.log("✅ /auth/me response:", user);
+    
+        if (user.type === "staff") {
+          const role = user.role?.toLowerCase();
+          if (role === "admin") {
+            router.replace("/admin/dashboard");
+          } else {
+            router.replace("/staff/dashboard");
+          }
+        } else {
+          // Kalau bukan staff (misalnya nanti ada user biasa)
+          router.replace("/");
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };    
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
