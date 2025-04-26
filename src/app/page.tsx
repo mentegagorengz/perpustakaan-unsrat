@@ -81,14 +81,14 @@ export default function Home() {
                 <p className="text-lg mb-6 font-light">
                   Pusat informasi dan literasi terbaik untuk mendukung kegiatan akademik Anda.
                 </p>
-                <button
+                {/* <button
                   className="px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
                   style={{ backgroundColor: secondaryColor, color: "#FFFFFF" }}
                   aria-label="Jelajahi Perpustakaan"
                   onClick={() => router.push("/pencarianbuku")}
                 >
                   Jelajahi Sekarang
-                </button>
+                </button> */}
               </div>
             </div>
           ))}
@@ -150,7 +150,7 @@ export default function Home() {
               style={{ backgroundColor: secondaryColor, color: "#FFFFFF" }}
               onClick={() => router.push("/Koleksi-publik")}
             >
-              Pinjam Buku Sekarang
+              Cari Buku Sekarang
             </button>
           </div>
         </section>
