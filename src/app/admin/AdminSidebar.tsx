@@ -12,6 +12,7 @@ import {
   ChevronUp,
   FileText,
   Newspaper,
+  Book,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -133,6 +134,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isSidebarOpen, setIsSidebar
                 <SubLink
                   href="/admin/books"
                   label="Buku"
+                  icon={<Book size={16} />}
                   isActive={pathname === "/admin/books"}
                 />
                 <SubLink

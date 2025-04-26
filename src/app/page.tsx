@@ -141,14 +141,14 @@ export default function Home() {
         {/* CTA Section */}
         <section className="py-16 text-white" style={{ background: `linear-gradient(to right, ${secondaryColor}, ${secondaryHoverColor})` }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 className="text-3xl font-bold">Butuh Buku atau Referensi?</h3>
+            <h3 className="text-3xl font-bold">Cari Buku atau Referensi?</h3>
             <p className="text-lg mt-2" style={{ color: "#E0E0E0" }}>
               Dapatkan akses ke koleksi buku digital dan jurnal ilmiah terbaik.
             </p>
             <button
               className="mt-6 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
               style={{ backgroundColor: secondaryColor, color: "#FFFFFF" }}
-              onClick={() => router.push("/peminjaman")}
+              onClick={() => router.push("/koleksi-publik")}
             >
               Pinjam Buku Sekarang
             </button>

@@ -6,10 +6,11 @@ import { Trash, Search, Upload, Eye, Plus, Pencil, Download } from "lucide-react
 import BookFormPopup from "./BookFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import BookDetailDialog from "./BookDetailDialog";
+import withAdminAuth from "@/hoc/withAdminAuth";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/book`;
 
-function AdminBooksPage() {
+const AdminBooksPage: React.FC = () => {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -195,4 +196,4 @@ function AdminBooksPage() {
   );
 }
 
-export default AdminBooksPage;
+export default withAdminAuth(AdminBooksPage);

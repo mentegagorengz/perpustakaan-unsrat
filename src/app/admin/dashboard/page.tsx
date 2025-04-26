@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, BookOpen, CheckCircle, ListChecks, Bell } from "lucide-react";
 import { Bar } from "react-chartjs-2";
-import withAuth from "@/hoc/withAuth";
+import withAdminAuth from "@/hoc/withAdminAuth";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -57,7 +57,7 @@ interface DashboardData {
   overdueList: OverdueItem[];
 }
 
-const AdminDashboard = () => {
+const AdminDashboard: React.FC = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState("");
 
@@ -117,7 +117,7 @@ const AdminDashboard = () => {
         <DashboardCard title="Transaksi Hari Ini" count={stats.transactionsToday} icon={<Bell size={28} />} />
         <DashboardCard title="Total Transaksi" count={stats.totalTransactions} icon={<CheckCircle size={28} />} />
         <DashboardCard title="Jumlah Pengguna" count={stats.users} icon={<Users size={28} />} />
-        <DashboardCard title="Jumlah Admin" count={stats.admins} icon={<Users size={28} />} />
+        {/* <DashboardCard title="Jumlah Admin" count={stats.admins} icon={<Users size={28} />} /> */}
       </div>
 
       {/* Grafik Populer */}
@@ -225,4 +225,4 @@ const DashboardCard = ({
   </Card>
 );
 
-export default AdminDashboard;
+export default withAdminAuth(AdminDashboard);

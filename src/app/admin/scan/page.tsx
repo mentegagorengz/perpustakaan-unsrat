@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
+import withAdminAuth from "@/hoc/withAdminAuth";
 
-export default function ScanPage() {
+const ScanPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -85,3 +86,5 @@ export default function ScanPage() {
     </div>
   );
 }
+
+export default withAdminAuth(ScanPage);

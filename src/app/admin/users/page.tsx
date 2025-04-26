@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pencil, Trash, Plus, Search } from "lucide-react";
-import withAuth from "@/hoc/withAuth";
+import withAdminAuth from "@/hoc/withAdminAuth";
 import UserFormPopup from "./userformpopup";
 
 interface User {
@@ -19,7 +19,7 @@ interface User {
   phoneNumber: string;
 }
 
-const UserManagementPage = () => {
+const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -231,4 +231,4 @@ const UserManagementPage = () => {
   );
 };
 
-export default UserManagementPage;
+export default withAdminAuth(UserManagementPage);
