@@ -19,7 +19,7 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, onOpenChange, children
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50 flex justify-center items-center">
       <div className="bg-white rounded-lg shadow-lg w-11/12 sm:w-[500px] max-h-[90vh] overflow-y-auto p-6">
         {children}
         <div className="text-right mt-6">

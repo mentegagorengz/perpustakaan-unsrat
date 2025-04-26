@@ -148,7 +148,7 @@ export default function Home() {
             <button
               className="mt-6 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
               style={{ backgroundColor: secondaryColor, color: "#FFFFFF" }}
-              onClick={() => router.push("/koleksi-publik")}
+              onClick={() => router.push("/Koleksi-publik")}
             >
               Pinjam Buku Sekarang
             </button>
