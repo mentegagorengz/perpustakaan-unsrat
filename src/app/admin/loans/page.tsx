@@ -77,9 +77,9 @@ const BorrowingHistoryPage: React.FC = () => {
     successMessage: string
   ) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/${action}/${transactionId}`, {
+      const response = await fetch(`${API_BASE_URL}/${transactionId}/${action}`, { // Updated URL structure
         method: "PATCH",
-        credentials: "include", // ⬅️ cookie akan terkirim otomatis
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
