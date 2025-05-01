@@ -6,6 +6,8 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import BookCard from "./BookCard";
 import Image from "next/image";
+import config from "@/config";
+
 
 interface Book {
   id: number;
@@ -47,7 +49,7 @@ function Peminjaman() {
       try {
         // Fetch books with pagination
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/book?search=${encodeURIComponent(searchTerm)}&page=${currentPage}`,
+          `${config.apiUrl}/book?search=${encodeURIComponent(searchTerm)}&page=${currentPage}`,
           {
             credentials: "include",
           }
@@ -77,7 +79,7 @@ function Peminjaman() {
     if (!selectedBook) return;
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions`, {
+      const res = await fetch(`${config.apiUrl}/transactions`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

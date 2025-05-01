@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import config from "@/config";
 
 export default function withAuth<T extends Record<string, unknown>>(
   Component: React.ComponentType<T>
@@ -14,7 +15,7 @@ export default function withAuth<T extends Record<string, unknown>>(
     useEffect(() => {
       const verify = async () => {
         try {
-          const res = await fetch("http://localhost:4000/users/profile", {
+          const res = await fetch(`${config.apiUrl}/users/profile`, {
             credentials: "include",
           });
 

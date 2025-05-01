@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import config from "@/config";
 
 export default function withAdminAuth<T extends Record<string, unknown>>(
   Component: React.ComponentType<T>
@@ -14,7 +15,7 @@ export default function withAdminAuth<T extends Record<string, unknown>>(
     useEffect(() => {
       const verify = async () => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+          const res = await fetch(`${config.apiUrl}/auth/me`, {
             method: "GET",
             credentials: "include", // ⬅️ agar cookie terkirim
           });

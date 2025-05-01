@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import withAuth from "@/hoc/withAuth";
 import React from "react";
 import { useRouter } from "next/navigation";
+import config from "@/config";
 
-const API_BASE_URL = "http://localhost:4000";
 
 function BuktiPeminjaman() {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -19,7 +19,7 @@ function BuktiPeminjaman() {
 
   const fetchTransactions = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions/me`, {
+      const response = await fetch(`${config.apiUrl}/transactions/me`, {
         method: "GET",
         credentials: "include",
       });

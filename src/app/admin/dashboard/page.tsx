@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Users, BookOpen, CheckCircle, ListChecks, Bell } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import withAdminAuth from "@/hoc/withAdminAuth";
+import config from "@/config";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -62,7 +64,7 @@ const AdminDashboard: React.FC = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/dashboard`, {
+    fetch(`${config.apiUrl}/dashboard`, {
       method: "GET",
       credentials: "include",
     })
@@ -134,7 +136,7 @@ const AdminDashboard: React.FC = () => {
         <div className="flex flex-col sm:flex-row flex-wrap gap-3">
           <Button
             onClick={() =>
-              window.open("http://localhost:4000/transactions/export/overdue", "_blank")
+              window.open(`${config.apiUrl}/transactions/export/overdue`, "_blank")
             }
             className="bg-red-600 text-white px-4 py-2 rounded"
           >
@@ -142,7 +144,7 @@ const AdminDashboard: React.FC = () => {
           </Button>
           <Button
             onClick={() =>
-              window.open("http://localhost:4000/transactions/export/borrowed", "_blank")
+              window.open(`${config.apiUrl}/transactions/export/borrowed`, "_blank")
             }
             className="bg-yellow-600 text-white px-4 py-2 rounded"
           >
@@ -150,7 +152,7 @@ const AdminDashboard: React.FC = () => {
           </Button>
           <Button
             onClick={() =>
-              window.open("http://localhost:4000/transactions/export/all", "_blank")
+              window.open(`${config.apiUrl}/transactions/export/all`, "_blank")
             }
             className="bg-gray-800 text-white px-4 py-2 rounded"
           >

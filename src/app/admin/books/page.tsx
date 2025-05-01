@@ -7,8 +7,10 @@ import BookFormPopup from "./BookFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import BookDetailDialog from "./BookDetailDialog";
 import withAdminAuth from "@/hoc/withAdminAuth";
+import config from "@/config";
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/book`;
+
+const API_BASE_URL = `${config.apiUrl}/book`;
 
 const AdminBooksPage: React.FC = () => {
   const [books, setBooks] = useState([]);

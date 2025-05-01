@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Pencil, Trash, Plus, Search } from "lucide-react";
 import withAdminAuth from "@/hoc/withAdminAuth";
 import UserFormPopup from "./userformpopup";
+import config from "@/config";
+
 
 interface User {
   id: string;
@@ -54,7 +56,7 @@ const UserManagementPage: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users`, {
+      const response = await fetch(`${config.apiUrl}/users`, {
         credentials: "include",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -78,7 +80,7 @@ const UserManagementPage: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${deleteUserId}`, {
+      const response = await fetch(`${config.apiUrl}/users/${deleteUserId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -103,8 +105,8 @@ const UserManagementPage: React.FC = () => {
     try {
       const method = userData.id ? "PUT" : "POST";
       const endpoint = userData.id
-        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userData.id}`
-        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/register`;
+        ? `${config.apiUrl}/users/${userData.id}`
+        : `${config.apiUrl}/users/register`;
 
       const payload = { ...userData };
       if (method === "PUT" && !userData.password) {

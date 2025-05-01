@@ -7,8 +7,10 @@ import withAdminAuth from "@/hoc/withAdminAuth";
 import PenelitianFormPopup from "./PenelitianFormPopup";
 import CSVUploadDialog from "./CSVUploadDialog";
 import PenelitianDetailDialog from "./PenelitianDetailDialog";
+import config from "@/config";
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/penelitian`;
+
+const API_BASE_URL = `${config.apiUrl}/penelitian`;
 
 interface Penelitian {
   id: string;

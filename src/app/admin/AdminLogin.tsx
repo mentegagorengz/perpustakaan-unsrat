@@ -3,6 +3,7 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode, JwtPayload } from "jwt-decode";
+import config from "@/config";
 
 // Tipe payload kustom dengan properti role
 interface MyJwtPayload extends JwtPayload {
@@ -20,7 +21,7 @@ export default function AdminLoginPage() {
     // Coba panggil /auth/me untuk cek login dari cookie
     const checkLogin = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+        const res = await fetch(`${config.apiUrl}/auth/me`, {
           method: "GET",
           credentials: "include",
         });
@@ -61,7 +62,7 @@ export default function AdminLoginPage() {
     
       try {
         // LOGIN STAFF
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/staff/login`, {
+        const response = await fetch(`${config.apiUrl}/auth/staff/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include", // agar cookie access_token terkirim
@@ -74,7 +75,7 @@ export default function AdminLoginPage() {
         }
     
         // FETCH DATA ME
-        const resUser = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+        const resUser = await fetch(`${config.apiUrl}/auth/me`, {
           method: "GET",
           credentials: "include",
         });

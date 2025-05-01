@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import DetailPopup from "@/components/DetailPopup"; // pastikan path sesuai strukturmu
+import config from "@/config";
+
 
 const KoleksiPublikPage = () => {
   const [activeTab, setActiveTab] = useState<"buku" | "penelitian" | "majalah">("buku");
@@ -16,12 +18,13 @@ const KoleksiPublikPage = () => {
 
   const [totalBuku, setTotalBuku] = useState(0);
   const [totalMajalah, setTotalMajalah] = useState(0);
+  const [totalPenelitian, setTotalPenelitian] = useState(0);
 
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
   const fetchBuku = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/book?search=${search}&page=${page}&limit=${limit}`, {
+      const res = await fetch(`${config.apiUrl}/book?search=${search}&page=${page}&limit=${limit}`, {
         method: "GET",
         credentials: "include",
       });
@@ -43,7 +46,7 @@ const KoleksiPublikPage = () => {
   };   
 
   const fetchMajalah = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/majalah?search=${search}&page=${page}&limit=${limit}`, {
+    const res = await fetch(`${config.apiUrl}/majalah?search=${search}&page=${page}&limit=${limit}`, {
       method: "GET",
       credentials: "include",
     });
@@ -53,12 +56,18 @@ const KoleksiPublikPage = () => {
   };
 
   const fetchPenelitian = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/penelitian?search=${search}`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const data = await res.json();
-    setPenelitianData(Array.isArray(data.data) ? data.data : []);
+    try {
+      const res = await fetch(`${config.apiUrl}/penelitian?search=${search}&page=${page}&limit=${limit}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await res.json();
+      setPenelitianData(Array.isArray(data.data) ? data.data : []);
+      setTotalPenelitian(data.total || 0);
+    } catch (err) {
+      console.error("❌ Gagal ambil data penelitian:", err);
+      setPenelitianData([]); // supaya tidak error render
+    }
   };
 
   useEffect(() => {
@@ -70,6 +79,7 @@ const KoleksiPublikPage = () => {
   useEffect(() => {
     if (activeTab === "buku") fetchBuku();
     if (activeTab === "majalah") fetchMajalah();
+    if (activeTab === "penelitian") fetchPenelitian();
   }, [page]);
 
   useEffect(() => {
@@ -83,6 +93,7 @@ const KoleksiPublikPage = () => {
   const totalPages = {
     buku: Math.ceil(totalBuku / limit),
     majalah: Math.ceil(totalMajalah / limit),
+    penelitian: Math.ceil(totalPenelitian / limit),
   };
 
   const renderCard = (item: any) => (
@@ -168,57 +179,68 @@ const KoleksiPublikPage = () => {
       </div>
 
       {/* Pagination */}
-      {(activeTab === "buku" || activeTab === "majalah") && (
-        <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
-          <button
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
-            className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-          >
-            ← Sebelumnya
-          </button>
+      {(activeTab === "buku" || activeTab === "majalah" || activeTab === "penelitian") && (
+        <div className="mt-10 flex flex-col items-center gap-4">
+          {/* Total Indicator */}
+          <p className="text-sm text-gray-600">
+            Total {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}:{" "}
+            {activeTab === "buku" && totalBuku}
+            {activeTab === "majalah" && totalMajalah}
+            {activeTab === "penelitian" && totalPenelitian}
+          </p>
 
-          {page > 3 && (
-            <>
-              <button onClick={() => setPage(1)} className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300">1</button>
-              {page > 4 && <span className="px-2">...</span>}
-            </>
-          )}
+          {/* Pagination Controls */}
+          <div className="flex justify-center items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            >
+              ← Sebelumnya
+            </button>
 
-          {Array.from({ length: 5 })
-            .map((_, i) => page - 2 + i)
-            .filter((p) => p > 0 && p <= (totalPages[activeTab] || 1))
-            .map((p) => (
-              <button
-                key={p}
-                onClick={() => setPage(p)}
-                className={`px-3 py-1 text-sm rounded ${
-                  page === p ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
-                }`}
-              >
-                {p}
-              </button>
-            ))}
+            {page > 3 && (
+              <>
+                <button onClick={() => setPage(1)} className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300">1</button>
+                {page > 4 && <span className="px-2">...</span>}
+              </>
+            )}
 
-          {page < (totalPages[activeTab] || 1) - 2 && (
-            <>
-              {page < (totalPages[activeTab] || 1) - 3 && <span className="px-2">...</span>}
-              <button
-                onClick={() => setPage(totalPages[activeTab] || 1)}
-                className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300"
-              >
-                {totalPages[activeTab]}
-              </button>
-            </>
-          )}
+            {Array.from({ length: 5 })
+              .map((_, i) => page - 2 + i)
+              .filter((p) => p > 0 && p <= (totalPages[activeTab] || 1))
+              .map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`px-3 py-1 text-sm rounded ${
+                    page === p ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
 
-          <button
-            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages[activeTab] || 1))}
-            disabled={page === (totalPages[activeTab] || 1)}
-            className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-          >
-            Selanjutnya →
-          </button>
+            {page < (totalPages[activeTab] || 1) - 2 && (
+              <>
+                {page < (totalPages[activeTab] || 1) - 3 && <span className="px-2">...</span>}
+                <button
+                  onClick={() => setPage(totalPages[activeTab] || 1)}
+                  className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300"
+                >
+                  {totalPages[activeTab]}
+                </button>
+              </>
+            )}
+
+            <button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages[activeTab] || 1))}
+              disabled={page === (totalPages[activeTab] || 1)}
+              className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            >
+              Selanjutnya →
+            </button>
+          </div>
         </div>
       )}
 

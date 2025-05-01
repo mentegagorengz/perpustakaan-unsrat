@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import config from "@/config";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -15,7 +16,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+        const res = await fetch(`${config.apiUrl}/auth/me`, {
           credentials: "include",
         });
 
@@ -39,7 +40,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+      await fetch(`${config.apiUrl}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

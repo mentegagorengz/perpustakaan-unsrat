@@ -7,8 +7,10 @@ import {
 import { Button } from "@/components/ui/button";
 import withAdminAuth from "@/hoc/withAdminAuth";
 import * as XLSX from "xlsx";
+import config from "@/config";
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions`;
+
+const API_BASE_URL = `${config.apiUrl}/transactions`;
 
 interface Transaction {
   id: string;

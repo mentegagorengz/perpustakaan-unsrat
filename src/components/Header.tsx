@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext"; // Import useAuth
+import config from "@/config";
 
 interface NavLink {
   href: string;
@@ -39,7 +40,7 @@ export default function Header() {
   // Fungsi Logout dengan Redirect
   const handleLogout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+      await fetch(`${config.apiUrl}/auth/logout`, {
         method: "POST",
         credentials: "include", // ⬅️ WAJIB agar cookie terkirim
       });

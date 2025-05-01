@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import withAdminAuth from "@/hoc/withAdminAuth";
+import config from "@/config";
+
 
 const ScanPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -25,7 +27,7 @@ const ScanPage: React.FC = () => {
         console.log("✅ QR Code terdeteksi:", transactionId);
 
         try {
-          const resDetail = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions/${transactionId}`, {
+          const resDetail = await fetch(`${config.apiUrl}/transactions/${transactionId}`, {
             credentials: "include",
           });
 
@@ -37,7 +39,7 @@ const ScanPage: React.FC = () => {
           const transaction = await resDetail.json();
 
           if (transaction.status === "pending-pickup") {
-            const confirmRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions/${transactionId}/pickup`, {
+            const confirmRes = await fetch(`${config.apiUrl}/transactions/${transactionId}/pickup`, {
               method: "PATCH",
               credentials: "include",
             });
@@ -47,7 +49,7 @@ const ScanPage: React.FC = () => {
               alert("❌ Gagal mengkonfirmasi pengambilan.");
             }
           } else if (transaction.status === "borrowed") {
-            const returnRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions/${transactionId}/return-qr`, {
+            const returnRes = await fetch(`${config.apiUrl}/transactions/${transactionId}/return-qr`, {
               method: "PATCH",
               credentials: "include",
             });

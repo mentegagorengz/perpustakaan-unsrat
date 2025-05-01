@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import config from "@/config";
 import {
   LogOut,
   BookOpen,
@@ -57,7 +58,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isSidebarOpen, setIsSidebar
 
   const handleLogout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+      await fetch(`${config.apiUrl}/auth/logout`, {
         method: "POST",
         credentials: "include", // agar cookie terkirim & dihapus
       });
