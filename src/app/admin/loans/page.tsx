@@ -77,19 +77,26 @@ const BorrowingHistoryPage: React.FC = () => {
     successMessage: string
   ) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Anda harus login sebagai admin.");
       const response = await fetch(`${API_BASE_URL}/${action}/${transactionId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        credentials: "include", // ⬅️ cookie akan terkirim otomatis
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-      if (!response.ok) throw new Error((await response.json()).message || "Gagal melakukan aksi.");
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Gagal melakukan aksi.");
+      }
+  
       alert(successMessage);
       fetchHistory();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Terjadi kesalahan yang tidak diketahui.");
     }
   };
+  
 
   const exportToExcel = () => {
     if (!history.length) return alert("Tidak ada data untuk diekspor.");
